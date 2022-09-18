@@ -1,22 +1,39 @@
 const path = require("path")
+const dotenv = require("dotenv")
+dotenv.config()
+
 const express = require("express")
 const session = require("express-session")
+const sqlite3 = require("better-sqlite3")
+const better_sqlite3_session_store = require("better-sqlite3-session-store")
+
+const database = new sqlite3("databases/database.sqlite")
 
 const app = express()
 app.listen(8080)
 
-app.set("view engine", "ejs")
+const SQLiteStore = better_sqlite3_session_store(session)
+const db_sessions = new sqlite3("databases/sessions-db.sqlite")
 
 app.use(express.static(path.join(__dirname, "public")))
 app.use(session({
     name: "foo",
-    secret: "bar",
+    store: new SQLiteStore({
+        client: db_sessions,
+        expired: {
+            clear: true,
+            intervalMs: 1000 * 60 * 15 // ms = 15min
+          }
+    }),
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
         maxAge: 1000 * 60 * 60 * 24,
     },
 }))
+
+app.set("view engine", "ejs")
 
 function isAuthenticated(request, response, next) {
     if (request.session.user) next()
