@@ -13,13 +13,12 @@ const app = express()
 app.listen(8080)
 
 const SQLiteStore = better_sqlite3_session_store(session)
-const db_sessions = new sqlite3("databases/sessions-db.sqlite")
 
 app.use(express.static(path.join(__dirname, "public")))
 app.use(session({
     name: "foo",
     store: new SQLiteStore({
-        client: db_sessions,
+        client: database,
         expired: {
             clear: true,
             intervalMs: 1000 * 60 * 15 // ms = 15min
@@ -27,7 +26,7 @@ app.use(session({
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
         maxAge: 1000 * 60 * 60 * 24,
     },
@@ -35,10 +34,12 @@ app.use(session({
 
 app.set("view engine", "ejs")
 
+
 function isAuthenticated(request, response, next) {
     if (request.session.user) next()
     else next("route")
 }
+
 
 app.get("/", isAuthenticated, (request, response) => {
     return response.render("pages/hello", { name: request.session.user })
@@ -47,35 +48,45 @@ app.get("/", (request, response) => {
     return response.redirect("/login")
 })
 
+
+app.get("/login", isAuthenticated, (request, response) => {
+    return response.redirect("/")
+})
 app.get("/login", (request, response) => {
-    if (request.session.user) return response.redirect("/")
     return response.render("pages/login")
 })
 
+
+app.post("/login", isAuthenticated, (request, response) => {
+    return response.redirect("/login")
+})
 app.post("/login", express.urlencoded({ extended: false }), (request, response) => {
-    const body = request.body
-    if (!body || !body.username || body.username.trim() === "") {
-        return response.redirect("/login")
-    }
+    validateInput(request, response)
     request.session.regenerate(error => {
-        if (error) console.log(error)
+        if (error) next(error)
         
-        request.session.user = body.username.trim()
+        request.session.user = request.body.username.trim()
         request.session.save(error => {
-            if (error) console.log(error)
+            if (error) next(error)
+            
             return response.redirect("/")
         })
     })
 })
+function validateInput(request, response) {
+    try {
+        var username = request.body.username.trim()
+        if (username == "") throw "Not a valid Username"
+    } catch (error) {
+        return response.redirect("/login")
+    }
+}
+
 
 app.get("/logout", (request, response) => {
-    request.session.user = null
-    request.session.save(error => {
-        if (error) console.log(error)
+    request.session.destroy(error => {
+        if (error) next(error)
 
-        request.session.regenerate(error => {
-            if (error) console.log(error)
-            return response.redirect("/")
-        })
+        return response.redirect("/login")
     })
 })
