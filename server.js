@@ -48,7 +48,7 @@ app.get("/", (request, response) => {
     return response.redirect("/login")
 })
 
-
+//---------------------LOGIN---------------------
 app.get("/login", isAuthenticated, (request, response) => {
     return response.redirect("/")
 })
