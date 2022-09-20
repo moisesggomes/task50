@@ -1,5 +1,4 @@
 const { scryptSync, randomBytes } = require("crypto")
-const { isStringObject } = require("util/types")
 
 const MINIMAL_USERNAME_LENGTH = 2
 const MINIMAL_PASSWORD_LENGTH = 6

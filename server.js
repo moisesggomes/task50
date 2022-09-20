@@ -3,6 +3,7 @@ const dotenv = require("dotenv")
 dotenv.config()
 
 const { signUp, login, isValidUsernameAndPassword } = require("./utils/login_signup")
+const { getTasks, createTask, updateTask, deleteTasks } = require("./utils/tasks")
 
 const express = require("express")
 const session = require("express-session")
@@ -33,6 +34,10 @@ app.use(session({
         maxAge: 1000 * 60 * 60 * 24 // 1 day
     },
 }))
+// app.use((request, response, next) => {
+//     request.session.errorMessage = undefined
+//     next()
+// })
 
 app.set("view engine", "ejs")
 
@@ -44,7 +49,7 @@ function isAuthenticated(request, response, next) {
 
 
 app.get("/", isAuthenticated, (request, response) => {
-    return response.render("pages/hello", { name: request.session.user })
+    return response.render("pages/hello", { name: request.session.user, errorMessage: request.session.errorMessage })
 })
 app.get("/", (request, response) => {
     return response.redirect("/login")
@@ -118,4 +123,39 @@ app.get("/logout", (request, response) => {
 
         return response.redirect("/login")
     })
+})
+
+
+//---------------------TASKS---------------------
+function getUser(request, response, database) {
+    const user = database.prepare("SELECT * FROM users WHERE username = ?").get(request.session.user)
+    if (!user) {
+        request.session.errorMessage = "User not found"
+        request.session.regenerate(error => {
+            if (error) next(error)
+
+            return response.redirect("/login")
+        })
+    }
+    return user
+}
+//---------------------GET---------------------
+app.get("/tasks", isAuthenticated, (request, response, next) => {
+    const user = getUser(request, response, database)
+    const result = getTasks(user.id, database)
+    if (typeof(result) == "string") {
+        request.session.errorMessage = result
+        return response.redirect("/")
+    }
+    return response.json(result)
+})
+//---------------------CREATE---------------------
+app.post("/tasks", express.json(), (request, response) => {
+    const user = getUser(request, response, database)
+    const result = createTask(request.body.task, user.id, database)
+    if (typeof(result) == "string") {
+        request.session.errorMessage = result
+        return response.redirect("/")
+    }
+    return response.json(result)
 })
