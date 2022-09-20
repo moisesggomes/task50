@@ -1,7 +1,5 @@
 function getTasks(userId, database) {
     const rows = database.prepare("SELECT * FROM tasks WHERE user_id = (SELECT id FROM users WHERE id = ?)").all(userId)
-    console.log(userId)
-    console.log(rows)
     if (rows.length == 0) {
         return "You don't have tasks yet!"
     }
@@ -23,27 +21,31 @@ function createTask(task, userId, database) {
 }
 function updateTask(task, userId, database) {
     try {
-        const info = database.prepare("UPDATE tasks SET task = ?, description = ?, finished = ? WHERE user_id = ?")
-                    .run(task.task, task.description, task.finished, userId)
+        const info = database.prepare("UPDATE tasks SET task = ?, description = ?, finished = ? WHERE id = ? AND user_id = ?")
+                    .run(task.task, task.description, task.finished, task.id, userId)
         if (info.changes == 0) {
             throw "Coundn't update task"
         }
-        return info
+        return database.prepare("SELECT * FROM tasks WHERE user_id = ?").all(userId)
     } catch(error) {
         return "Coundn't update task"
     }
 }
-function deleteTasks(tasks, userId, database) {
+function deleteTasks(taskArray, userId, database) {
     try {
         const statement = database.prepare("DELETE FROM tasks WHERE id = ? AND user_id = ?")
         let tasksDeleted = 0
-        for (let task of tasks) {
+        for (let task of taskArray) {
             const info = statement.run(task.id, userId)
             if (info.changes > 0) {
                 tasksDeleted++
             }
         }
-        return tasksDeleted
+        const tasks = database.prepare("SELECT * FROM tasks WHERE user_id = ?").all(userId)
+        return {
+            ...tasks,
+            tasksDeleted
+        }
     } catch(error) {
         return "An error occurred"
     }

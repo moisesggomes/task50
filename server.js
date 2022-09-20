@@ -2,7 +2,7 @@ const path = require("path")
 const dotenv = require("dotenv")
 dotenv.config()
 
-const { signUp, login, isValidUsernameAndPassword } = require("./utils/login_signup")
+const { signUp, login } = require("./utils/login_signup")
 const { getTasks, createTask, updateTask, deleteTasks } = require("./utils/tasks")
 
 const express = require("express")
@@ -34,10 +34,7 @@ app.use(session({
         maxAge: 1000 * 60 * 60 * 24 // 1 day
     },
 }))
-// app.use((request, response, next) => {
-//     request.session.errorMessage = undefined
-//     next()
-// })
+app.use(express.json())
 
 app.set("view engine", "ejs")
 
@@ -49,7 +46,7 @@ function isAuthenticated(request, response, next) {
 
 
 app.get("/", isAuthenticated, (request, response) => {
-    return response.render("pages/hello", { name: request.session.user, errorMessage: request.session.errorMessage })
+    return response.render("pages/hello", { name: request.session.user })
 })
 app.get("/", (request, response) => {
     return response.redirect("/login")
@@ -128,34 +125,73 @@ app.get("/logout", (request, response) => {
 
 //---------------------TASKS---------------------
 function getUser(request, response, database) {
-    const user = database.prepare("SELECT * FROM users WHERE username = ?").get(request.session.user)
+    const user = database.prepare("SELECT id, username FROM users WHERE username = ?").get(request.session.user)
     if (!user) {
-        request.session.errorMessage = "User not found"
         request.session.regenerate(error => {
             if (error) next(error)
 
-            return response.redirect("/login")
+            return response.json({
+                message: "User not found"
+            })
         })
     }
     return user
 }
+function notAuthenticated(request, response) {
+    return response.status(401).json({ message: "Not authenticated" })
+}
 //---------------------GET---------------------
 app.get("/tasks", isAuthenticated, (request, response, next) => {
     const user = getUser(request, response, database)
+
     const result = getTasks(user.id, database)
     if (typeof(result) == "string") {
-        request.session.errorMessage = result
-        return response.redirect("/")
+        return response.json({
+            message: result
+        })
     }
     return response.json(result)
 })
+app.get("/tasks", (request, response) => {
+    request.session.errorMessage = "Not authenticated"
+    return response.redirect("/login")
+})
+
 //---------------------CREATE---------------------
-app.post("/tasks", express.json(), (request, response) => {
+app.post("/tasks", isAuthenticated, (request, response) => {
     const user = getUser(request, response, database)
+
     const result = createTask(request.body.task, user.id, database)
     if (typeof(result) == "string") {
         request.session.errorMessage = result
-        return response.redirect("/")
+        return response.json(database.prepare("SELECT * FROM tasks WHERE user_id = ?").all(user.id))
     }
     return response.json(result)
 })
+app.post("/tasks", notAuthenticated)
+
+//---------------------UPDATE---------------------
+app.put("/tasks", isAuthenticated, (request, response) => {
+    const user = getUser(request, response, database)
+
+    const result = updateTask(request.body.task, user.id, database)
+    if (typeof(result) == "string") {
+        request.session.errorMessage = result
+        return response.json(database.prepare("SELECT * FROM tasks WHERE user_id = ?").all(user.id))
+    }
+    return response.json(result)
+})
+app.put("/tasks", notAuthenticated)
+
+//---------------------DELETE---------------------
+app.delete("/tasks", isAuthenticated, (request, response) => {
+    const user = getUser(request, response, database)
+
+    const result = deleteTasks(request.body.tasks, user.id, database)
+    if (typeof(result) == "string") {
+        request.session.errorMessage = result
+        return response.json(database.prepare("SELECT * FROM tasks WHERE user_id = ?").all(user.id))
+    }
+    return response.json(result)
+})
+app.delete("/tasks", notAuthenticated)
