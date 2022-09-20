@@ -150,7 +150,7 @@ app.get("/tasks", isAuthenticated, (request, response, next) => {
             message: result
         })
     }
-    return response.json(result)
+    return response.status(200).json(result)
 })
 app.get("/tasks", (request, response) => {
     request.session.errorMessage = "Not authenticated"
@@ -163,10 +163,9 @@ app.post("/tasks", isAuthenticated, (request, response) => {
 
     const result = createTask(request.body.task, user.id, database)
     if (typeof(result) == "string") {
-        request.session.errorMessage = result
         return response.json(database.prepare("SELECT * FROM tasks WHERE user_id = ?").all(user.id))
     }
-    return response.json(result)
+    return response.status(201).json(result)
 })
 app.post("/tasks", notAuthenticated)
 
@@ -176,10 +175,9 @@ app.put("/tasks", isAuthenticated, (request, response) => {
 
     const result = updateTask(request.body.task, user.id, database)
     if (typeof(result) == "string") {
-        request.session.errorMessage = result
         return response.json(database.prepare("SELECT * FROM tasks WHERE user_id = ?").all(user.id))
     }
-    return response.json(result)
+    return response.status(200).json(result)
 })
 app.put("/tasks", notAuthenticated)
 
@@ -189,9 +187,8 @@ app.delete("/tasks", isAuthenticated, (request, response) => {
 
     const result = deleteTasks(request.body.tasks, user.id, database)
     if (typeof(result) == "string") {
-        request.session.errorMessage = result
         return response.json(database.prepare("SELECT * FROM tasks WHERE user_id = ?").all(user.id))
     }
-    return response.json(result)
+    return response.status(200).json(result)
 })
 app.delete("/tasks", notAuthenticated)
