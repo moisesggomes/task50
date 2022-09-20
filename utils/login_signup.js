@@ -10,7 +10,7 @@ const MINIMAL_USERNAME_LENGTH = 2
 const MINIMAL_PASSWORD_LENGTH = 6
 const INVALID_USERNAME_OR_PASSWORD_MESSAGE = `Invalid username or password. Please be sure that the username is correct and that your password has ${MINIMAL_PASSWORD_LENGTH} or more characters`
 
-exports.signUp = function signUp(username, password) {
+function signUp(username, password) {
     if (!isValidUsernameAndPassword(username, password)) {
         return INVALID_USERNAME_OR_PASSWORD_MESSAGE
     }
@@ -28,20 +28,23 @@ exports.signUp = function signUp(username, password) {
     return insertNewUser.run(parsedUsername, hashedPassword)
 }
 
-exports.login = function login(username, password) {
+function login(username, password) {
     if (!isValidUsernameAndPassword(username, password)) {
         return INVALID_USERNAME_OR_PASSWORD_MESSAGE
     }
 
     const parsedUsername = username.trim()
     const parsedPassword = password.trim()
-    const row = db.prepare("SELECT username FROM users WHERE username = ?").get(parsedUsername)
+    const row = db.prepare("SELECT * FROM users WHERE username = ?").get(parsedUsername)
     if (!row) {
         return "User not found"
     }
     const [ salt, hashedPassword ] = row.hashed_password.split(":")
     if (scryptSync(parsedPassword, salt, Number(process.env.HASHED_PASSWORD_LENGTH)).toString("hex") === hashedPassword) {
-        return row
+        return {
+            id: row.id,
+            username: row.username
+        }
     }
     return "Wrong password"
 }
@@ -63,3 +66,7 @@ function hashPassword(password, salt) {
     const hashedPassword = scryptSync(password, salt, Number(process.env.HASHED_PASSWORD_LENGTH)).toString("hex")
     return `${salt}:${hashedPassword}`
 }
+
+exports.signUp = signUp
+exports.login = login
+exports.isValidUsernameAndPassword = isValidUsernameAndPassword
