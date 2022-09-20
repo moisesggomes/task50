@@ -1,16 +1,11 @@
-const path = require("path")
-const dotenv = require("dotenv")
-dotenv.config()
-
 const { scryptSync, randomBytes } = require("crypto")
-const sqlite3 = require("better-sqlite3")
-const db = new sqlite3(path.join(__dirname, "../databases/test.sqlite"))
+const { isStringObject } = require("util/types")
 
 const MINIMAL_USERNAME_LENGTH = 2
 const MINIMAL_PASSWORD_LENGTH = 6
 const INVALID_USERNAME_OR_PASSWORD_MESSAGE = `Invalid username or password. Please be sure that the username is correct and that your password has ${MINIMAL_PASSWORD_LENGTH} or more characters`
 
-function signUp(username, password) {
+function signUp(username, password, db) {
     if (!isValidUsernameAndPassword(username, password)) {
         return INVALID_USERNAME_OR_PASSWORD_MESSAGE
     }
@@ -25,10 +20,11 @@ function signUp(username, password) {
     const salt = randomBytes(Number(process.env.SALT_LENGTH)).toString("hex")
     const hashedPassword = hashPassword(parsedPassword, salt)
     const insertNewUser = db.prepare("INSERT INTO users (username, hashed_password) VALUES (?, ?)")
-    return insertNewUser.run(parsedUsername, hashedPassword)
+    const info = insertNewUser.run(parsedUsername, hashedPassword)
+    return { ...info, username: parsedUsername }
 }
 
-function login(username, password) {
+function login(username, password, db) {
     if (!isValidUsernameAndPassword(username, password)) {
         return INVALID_USERNAME_OR_PASSWORD_MESSAGE
     }

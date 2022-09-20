@@ -2,6 +2,8 @@ const path = require("path")
 const dotenv = require("dotenv")
 dotenv.config()
 
+const { signUp, login, isValidUsernameAndPassword } = require("./utils/login_signup")
+
 const express = require("express")
 const session = require("express-session")
 const sqlite3 = require("better-sqlite3")
@@ -16,7 +18,8 @@ const SQLiteStore = better_sqlite3_session_store(session)
 
 app.use(express.static(path.join(__dirname, "public")))
 app.use(session({
-    name: "foo",
+    name: "session",
+    secret: process.env.SESSION_SECRET,
     store: new SQLiteStore({
         client: database,
         expired: {
@@ -24,11 +27,10 @@ app.use(session({
             intervalMs: 1000 * 60 * 15 // ms = 15min
           }
     }),
-    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 1000 * 60 * 60 * 24,
+        maxAge: 1000 * 60 * 60 * 24 // 1 day
     },
 }))
 
@@ -53,15 +55,17 @@ app.get("/login", isAuthenticated, (request, response) => {
     return response.redirect("/")
 })
 app.get("/login", (request, response) => {
-    return response.render("pages/login")
+    return response.render("pages/login", { errorMessage: request.session.errorMessage })
 })
 
 
-app.post("/login", isAuthenticated, (request, response) => {
-    return response.redirect("/login")
-})
-app.post("/login", express.urlencoded({ extended: false }), (request, response) => {
-    validateInput(request, response)
+app.post("/login", express.urlencoded({ extended: false }), (request, response, next) => {
+    const result = login(request.body.username, request.body.password, database)
+    if (typeof(result) === "string") {
+        request.session.errorMessage = result
+        return response.redirect("/login")
+    }
+    
     request.session.regenerate(error => {
         if (error) next(error)
         
@@ -73,16 +77,41 @@ app.post("/login", express.urlencoded({ extended: false }), (request, response) 
         })
     })
 })
-function validateInput(request, response) {
-    try {
-        var username = request.body.username.trim()
-        if (username == "") throw "Not a valid Username"
-    } catch (error) {
-        return response.redirect("/login")
+
+
+//---------------------SIGNUP---------------------
+app.get("/signup", isAuthenticated, (request, response) => {
+    return response.redirect("/")
+})
+app.get("/signup", (request, response) => {
+    return response.render("pages/signup", { errorMessage: request.session.errorMessage })
+})
+app.post("/signup", express.urlencoded({ extended: false }), (request, response, next) => {
+    if (request.body.password != request.body.passwordValidate) {
+        request.session.errorMessage = "Passwords don't match"
+        return response.redirect("/signup")
     }
-}
+
+    const result = signUp(request.body.username, request.body.password, database)
+    if (typeof(result) === "string") {
+        request.session.errorMessage = result
+        return response.redirect("/signup")
+    }
+    
+    request.session.regenerate(error => {
+        if (error) next(error)
+
+        request.session.user = result.username
+        request.session.save(error => {
+            if (error) next(error)
+
+            return response.redirect("/")
+        })
+    })
+})
 
 
+//---------------------LOGOUT---------------------
 app.get("/logout", (request, response) => {
     request.session.destroy(error => {
         if (error) next(error)
