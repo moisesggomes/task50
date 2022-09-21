@@ -1,0 +1,56 @@
+header a#logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+}
+
+main {
+    min-height: 40rem;
+    padding: 3rem;
+}
+
+main div:first-child {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+}
+main div:first-child #pageActions {
+    display: flex;
+    gap: 3rem;
+}
+main div:first-child #pageActions img {
+    width: 3rem;
+
+    cursor: pointer;
+}
+
+main table {
+    margin-block: 2rem;
+    width: 100%;
+    border-collapse: collapse;
+
+    background-color: #E6E6E6;
+}
+main table th,
+main table td {
+    border: thin solid black;
+    padding: .8rem;
+}
+main table img {
+    width: 2rem;
+
+    cursor: pointer;
+}
+main table .finished div {
+    display: flex;
+    justify-content: center;
+}
+main table .finished input[type="checkbox"] {
+    width: 2rem;
+    height: 2rem;
+}
+main table .actions div {
+    display: flex;
+    justify-content: space-between;
+}

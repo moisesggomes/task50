@@ -2,14 +2,56 @@
 <html lang="en">
 <head>
     <%- include("../partials/head.ejs", { title: "Home" }) %>
+
+    <link rel="stylesheet" href="home.css">
 </head>
 <body>
     <%- include("../partials/header.ejs", { name }) %>
 
     <main>
-        
+        <div>
+            <h2>Create, upadte and delete your tasks!</h2>
+            <div id="pageActions">
+                <img src="assets/reload.svg" alt="Refresh tasks" onclick="getTasks(event)" title="Refresh tasks" />
+                <img src="assets/create.svg" alt="Create task" onclick="createTask(event)" title="Create task" />
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Finished</th>
+                    <th>Task</th>
+                    <th>Details</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- <tr>
+                    <td class="finished">
+                        <div>
+                            <input type="checkbox" onchange="update(event)" />
+                        </div>
+                    </td>
+                    <td class="task" contenteditable="true">
+                        Finish homework
+                    </td>
+                    <td class="description" contenteditable="true">
+                        Math and science
+                    </td>
+                    <td class="actions">
+                        <div>
+                            <img src="assets/edit.svg" alt="Edit task" title="Send modifications" onclick="updateTask(event)" />
+                            <img src="assets/delete.svg" alt="Delete task" title="Delete task" onclick="deleteTask(event)" />
+                        </div>
+                    </td>
+                </tr> -->
+            </tbody>
+        </table>
     </main>
     
     <%- include("../partials/footer.ejs") %>
+
+    <script src="home.js"></script>
 </body>
 </html>

@@ -30,7 +30,8 @@ body {
 
 a:focus,
 input:focus,
-button:focus {
+button:focus,
+td:focus {
     outline: thick solid lightblue;
 }
 
