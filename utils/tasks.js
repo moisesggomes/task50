@@ -14,7 +14,10 @@ function createTask(task, userId, database) {
         if (info.changes == 0) {
             throw "Coundn't create task"
         }
-        return "New task created!"
+        return {
+            message: "New task created!",
+            data: database.prepare("SELECT * FROM tasks WHERE user_id = ?").all(userId)
+        }
     } catch (error) {
         return "Coundn't create task"
     }
@@ -26,7 +29,10 @@ function updateTask(task, userId, database) {
         if (info.changes == 0) {
             throw "Coundn't update task"
         }
-        return database.prepare("SELECT * FROM tasks WHERE user_id = ?").all(userId)
+        return {
+            message: "Task updated!",
+            data: database.prepare("SELECT * FROM tasks WHERE user_id = ?").all(userId)
+        }
     } catch(error) {
         return "Coundn't update task"
     }

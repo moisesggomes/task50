@@ -161,7 +161,7 @@ app.post("/tasks", isAuthenticated, (request, response) => {
     const user = getUser(request, response, database)
 
     const result = createTask(request.body.task, user.id, database)
-    return response.json({ message: result })
+    return response.json(result)
 })
 app.post("/tasks", redirectNotAuthenticated)
 
