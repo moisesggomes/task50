@@ -19,7 +19,7 @@ function createTask(event) {
     const row = createRow(task)
     tbody.appendChild(row)
 }
-async function sendTask(event) {
+async function sendTask(event, method) {
     const trContainer = event.target.parentNode.parentNode.parentNode
     const tdFinished = trContainer.querySelector("input[type='checkbox']")
     const tdTask = trContainer.querySelector(".task")
@@ -27,6 +27,7 @@ async function sendTask(event) {
 
     const body = {
         task: {
+            id: trContainer.dataset.taskId,
             finished: tdFinished.checked ? 1 : 0,
             task: tdTask.innerHTML,
             description: tdDescription.innerHTML
@@ -34,7 +35,7 @@ async function sendTask(event) {
     }
 
     const xhr = new XMLHttpRequest()
-    xhr.open("POST", "/tasks", true)
+    xhr.open(method, "/tasks", true)
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xhr.send(JSON.stringify(body))
     xhr.onreadystatechange = function() {
@@ -45,13 +46,13 @@ async function sendTask(event) {
 }
 
 
-function updateTask(event) {
-
-}
+// function updateTask(event) {
+//     sendTask(event)
+// }
 
 
 function deleteTask(event) {
-
+    console.log("delete")
 }
 
 
@@ -66,7 +67,7 @@ function writeTasks(tasks) {
 
 function createRow(task) {
     const tr = document.createElement("tr")
-    tr.setAttribute("meta-taskId", task.id)
+    tr.dataset.taskId = task.id
 
     const tdFinished = createTdFinished(task)
     tr.appendChild(tdFinished)
@@ -102,7 +103,6 @@ function createTdFinished(task) {
     } else {
         finished.checked = false
     }
-    finished.addEventListener("click", updateTask)
     div.appendChild(finished)
     return tdFinished
 }
@@ -128,7 +128,7 @@ function createTdActions() {
     tdActions.classList.add("actions")
     const div = document.createElement("div")
     tdActions.appendChild(div)
-    div.innerHTML = `   <img src="assets/edit.svg" alt="Edit task" title="Send modifications" onclick="updateTask(event)" />
+    div.innerHTML = `   <img src="assets/edit.svg" alt="Edit task" title="Send modifications" onclick="sendTask(event, 'PUT')" />
                         <img src="assets/delete.svg" alt="Delete task" title="Delete task" onclick="deleteTask(event)" />
                     `
     return tdActions
@@ -139,7 +139,7 @@ function createTdActionsForNewElement() {
     tdActions.classList.add("actions")
     const div = document.createElement("div")
     tdActions.appendChild(div)
-    div.innerHTML = `   <img src="assets/confirm.svg" alt="Create task" title="Create task" onclick="sendTask(event)" />
+    div.innerHTML = `   <img src="assets/confirm.svg" alt="Create task" title="Create task" onclick="sendTask(event, 'POST')" />
                         <img src="assets/delete.svg" alt="Delete task" title="Delete task" onclick="deleteTask(event)" />
                     `
     return tdActions

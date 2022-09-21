@@ -24,6 +24,7 @@ function createTask(task, userId, database) {
 }
 function updateTask(task, userId, database) {
     try {
+        task.id = Number(task.id)
         const info = database.prepare("UPDATE tasks SET task = ?, description = ?, finished = ? WHERE id = ? AND user_id = ?")
                     .run(task.task, task.description, task.finished, task.id, userId)
         if (info.changes == 0) {
