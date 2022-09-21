@@ -1,3 +1,7 @@
+const pageActions = document.querySelector("#pageActions")
+const deleteTasksIcon = document.querySelector("#deleteTasks")
+const tasksToBeDeleted = []
+
 getTasks()
 
 async function getTasks(event) {
@@ -46,13 +50,38 @@ async function sendTask(event, method) {
 }
 
 
-// function updateTask(event) {
-//     sendTask(event)
-// }
-
-
 function deleteTask(event) {
-    console.log("delete")
+    const trContainer = event.target.parentNode.parentNode.parentNode
+    if (tasksToBeDeleted.find(value => value.id == trContainer.dataset.taskId)) {
+        const index = tasksToBeDeleted.indexOf(trContainer.dataset.taskId)
+        tasksToBeDeleted.splice(index, 1)
+        trContainer.style.backgroundColor = "#E6E6E6"
+    } else {
+        tasksToBeDeleted.push({id: trContainer.dataset.taskId})
+        trContainer.style.backgroundColor = "salmon"
+    }
+
+    if (tasksToBeDeleted.length > 0) {
+        deleteTasksIcon.classList.add("show")
+    } else {
+        deleteTasksIcon.classList.remove("show")
+    }
+    console.log(tasksToBeDeleted.length)
+}
+function deleteTasks() {
+    const body = {
+        tasks: tasksToBeDeleted
+    }
+
+    const xhr = new XMLHttpRequest()
+    xhr.open("DELETE", "/tasks", true)
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.send(JSON.stringify(body))
+    xhr.onreadystatechange = function() {
+        try {
+            writeTasks(JSON.parse(xhr.response).tasks)
+        } catch (error) {}
+    }
 }
 
 

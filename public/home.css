@@ -24,6 +24,12 @@ main div:first-child #pageActions img {
 
     cursor: pointer;
 }
+main div:first-child #pageActions img#deleteTasks {
+    display: none;
+}
+main div:first-child #pageActions img#deleteTasks.show {
+    display: inline-block;
+}
 
 main table {
     margin-block: 2rem;

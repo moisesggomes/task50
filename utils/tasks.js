@@ -50,7 +50,7 @@ function deleteTasks(taskArray, userId, database) {
         }
         const tasks = database.prepare("SELECT * FROM tasks WHERE user_id = ?").all(userId)
         return {
-            ...tasks,
+            tasks: [...tasks],
             tasksDeleted
         }
     } catch(error) {
