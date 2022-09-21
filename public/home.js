@@ -38,9 +38,7 @@ async function sendTask(event) {
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xhr.send(JSON.stringify(body))
     xhr.onreadystatechange = function() {
-        if (this.readyState == 4) {
-            console.log(xhr.responseText)
-        }
+        getTasks()
     }
 }
 
