@@ -1,6 +1,6 @@
 const pageActions = document.querySelector("#pageActions")
 const deleteTasksIcon = document.querySelector("#deleteTasks")
-const tasksToBeDeleted = []
+let tasksToBeDeleted = []
 
 getTasks()
 
@@ -52,21 +52,26 @@ async function sendTask(event, method) {
 
 function deleteTask(event) {
     const trContainer = event.target.parentNode.parentNode.parentNode
-    if (tasksToBeDeleted.find(value => value.id == trContainer.dataset.taskId)) {
-        const index = tasksToBeDeleted.indexOf(trContainer.dataset.taskId)
-        tasksToBeDeleted.splice(index, 1)
+    
+    const idAlreadyInArray = tasksToBeDeleted.find(value => value.id == trContainer.dataset.taskId)
+    if (idAlreadyInArray) {
+        tasksToBeDeleted.forEach((value, index) => {
+            if (value.id == trContainer.dataset.taskId) {
+                tasksToBeDeleted.splice(index, 1)
+            }
+        })
         trContainer.style.backgroundColor = "#E6E6E6"
     } else {
         tasksToBeDeleted.push({id: trContainer.dataset.taskId})
         trContainer.style.backgroundColor = "salmon"
     }
-
+    
     if (tasksToBeDeleted.length > 0) {
         deleteTasksIcon.classList.add("show")
     } else {
         deleteTasksIcon.classList.remove("show")
     }
-    console.log(tasksToBeDeleted.length)
+    console.log(tasksToBeDeleted)
 }
 function deleteTasks() {
     const body = {
@@ -80,6 +85,8 @@ function deleteTasks() {
     xhr.onreadystatechange = function() {
         try {
             writeTasks(JSON.parse(xhr.response).tasks)
+            tasksToBeDeleted = []
+            deleteTasksIcon.classList.remove("show")
         } catch (error) {}
     }
 }
