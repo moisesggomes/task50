@@ -1,34 +1,19 @@
 :root {
     font-size: 62.5%;
-
+    
     --bg-color: #F6F6F6;
     --text: #080808;
+    --bg-button: lightgray;
 }
 
 * {
     margin: 0;
+    border-radius: .3rem;
     padding: 0;
-
+    
     box-sizing: border-box;
-
+    
     word-break: break-word;
-}
-
-#logo {
-    font-size: 2em;
-}
-#logo:hover {
-    color: initial;
-    font-weight: unset;
-}
-
-a {
-    color: var(--text);
-    text-decoration: none;
-}
-a:hover {
-    color: #505050;
-    font-weight: bold;
 }
 
 body {
@@ -43,14 +28,77 @@ body {
     font-size: 1.6rem;
 }
 
+a:focus,
+input:focus,
+button:focus {
+    outline: thick solid lightblue;
+}
+
+a {
+    color: var(--text);
+    text-decoration: none;
+}
+a:hover {
+    color: #505050;
+    font-weight: bold;
+}
+
+#logo {
+    font-size: 2em;
+}
+#logo:hover {
+    color: initial;
+    font-weight: unset;
+}
+
+button {
+    border: none;
+    border-radius: .3rem;
+    padding: 1rem 2rem;
+
+    background-color: var(--bg-button);
+
+    letter-spacing: .1rem;
+}
+
+input {
+    border: none;
+    border-radius: .3rem;
+    padding: 1.2rem;
+}
+
+main #errorMessage {
+    color: rgb(255, 0, 0);
+    font-size: 2rem;
+    text-align: center;
+}
+main #errorMessage img {
+    width: 2rem;
+}
+
+
 header {
+    border-bottom: .2rem solid lightgray;
     padding: 2rem 1.5rem;
 
     display: flex;
     justify-content: space-between;
 }
+header #greetUser {
+    font-size: 2em;
+}
+header nav ul {
+    height: 100%;
+
+    list-style: none;
+
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
 
 footer {
+    border-top: .2rem solid lightgray;
     padding: 2rem 3rem;
 
     flex-grow: 1;

@@ -1,16 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include("../partials/head.ejs", { title: "Login" }) %>
+<head>
+    <%- include("../partials/head.ejs", { title: "Login" }) %>
+
+    <link rel="stylesheet" href="signup.css" />
+    <link rel="stylesheet" href="form.css" />
+</head>
 <body>
     <%- include("../partials/header.ejs") %>
-    <form action="/login" method="post">
-        <input autocomplete="off" autofocus name="username" placeholder="Username" required type="text" />
-        <input name="password" placeholder="Password" required type="password" />
-        <input type="submit" value="Login" />
-    </form>
-    <%_ if (errorMessage) { _%>
-        <p><%= errorMessage %></p>
-    <%_ } _%>
+
+    <main>
+        <form action="/login" method="post">
+            <input autocomplete="off" autofocus name="username" placeholder="Username" required type="text" />
+            <input name="password" placeholder="Password" required type="password" />
+            <button>Login</button>
+        </form>
+        <%_ if (errorMessage) { _%>
+            <p id="errorMessage">
+                <img src="assets/sad-face.svg" alt="Sad face" />
+                <%= errorMessage %>
+            </p>
+        <%_ } _%>
+    </main>
+
     <%- include("../partials/footer.ejs") %>
 </body>
 </html>
