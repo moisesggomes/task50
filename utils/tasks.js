@@ -7,14 +7,14 @@ function getTasks(userId, database) {
 
 }
 function createTask(task, userId, database) {
-    task.finished = task.finished == 1 ? 1 : 0
     try {
+        task.finished = task.finished == 1 ? 1 : 0
         const info = database.prepare("INSERT INTO tasks (user_id, task, description, finished) VALUES (?, ?, ?, ?)")
                                 .run(userId, task.task, task.description, task.finished)
         if (info.changes == 0) {
             throw "Coundn't create task"
         }
-        return database.prepare("SELECT * FROM tasks WHERE user_id = ?").all(userId)
+        return "New task created!"
     } catch (error) {
         return "Coundn't create task"
     }

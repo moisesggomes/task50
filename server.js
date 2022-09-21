@@ -161,10 +161,7 @@ app.post("/tasks", isAuthenticated, (request, response) => {
     const user = getUser(request, response, database)
 
     const result = createTask(request.body.task, user.id, database)
-    if (typeof(result) == "string") {
-        return response.json(database.prepare("SELECT * FROM tasks WHERE user_id = ?").all(user.id))
-    }
-    return response.status(201).json(result)
+    return response.json({ message: result })
 })
 app.post("/tasks", redirectNotAuthenticated)
 
