@@ -57,14 +57,14 @@ app.get("/login", isAuthenticated, (request, response) => {
     return response.redirect("/")
 })
 app.get("/login", (request, response) => {
-    return response.render("pages/login", { errorMessage: request.session.errorMessage })
+    return response.render("pages/login", { errorMessage: request.session.loginErrorMessage })
 })
 
 
 app.post("/login", express.urlencoded({ extended: false }), (request, response, next) => {
     const result = login(request.body.username, request.body.password, database)
     if (typeof(result) === "string") {
-        request.session.errorMessage = result
+        request.session.loginErrorMessage = result
         return response.redirect("/login")
     }
     
@@ -86,17 +86,17 @@ app.get("/signup", isAuthenticated, (request, response) => {
     return response.redirect("/")
 })
 app.get("/signup", (request, response) => {
-    return response.render("pages/signup", { errorMessage: request.session.errorMessage })
+    return response.render("pages/signup", { errorMessage: request.session.signupErrorMessage })
 })
 app.post("/signup", express.urlencoded({ extended: false }), (request, response, next) => {
     if (request.body.password != request.body.passwordValidate) {
-        request.session.errorMessage = "Passwords don't match"
+        request.session.signupErrorMessage = "Passwords don't match"
         return response.redirect("/signup")
     }
 
     const result = signUp(request.body.username, request.body.password, database)
     if (typeof(result) === "string") {
-        request.session.errorMessage = result
+        request.session.signupErrorMessage = result
         return response.redirect("/signup")
     }
     
@@ -138,7 +138,7 @@ function getUser(request, response, database) {
     return user
 }
 function redirectNotAuthenticated(request, response) {
-    return response.status(401).json({ message: "Not authenticated" })
+    return response.status(401).json({ errorMessage: "Not authenticated" })
 }
 //---------------------GET---------------------
 app.get("/tasks", isAuthenticated, (request, response, next) => {
@@ -153,8 +153,7 @@ app.get("/tasks", isAuthenticated, (request, response, next) => {
     return response.status(200).json(result)
 })
 app.get("/tasks", (request, response) => {
-    request.session.errorMessage = "Not authenticated"
-    return response.redirect("/login")
+    return response.status(401).json({ errorMessage: "Not authenticated" })
 })
 
 //---------------------CREATE---------------------
