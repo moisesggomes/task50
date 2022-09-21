@@ -1,0 +1,22 @@
+<header>
+    <a href="/" id="logo">Task50</a>
+    <nav>
+        <%_ if (typeof(name) === "undefined") { _%>
+            <ul>
+                <li>
+                    <a href="/login">Login</a>
+                </li>
+                <li>
+                    <a href="/signup">Register</a>
+                </li>
+            </ul>
+        <%_ } else { _%>
+            <div>
+                <h1>Hello, <%= typeof(name) === "undefined" ? "World!" : name %>!</h1>
+            </div>
+        <%_ } _%>
+    </nav>
+    <%_ if (typeof(name) !== "undefined") { _%>
+        <a href="/logout">Log out</a>
+    <%_ } _%>
+</header>

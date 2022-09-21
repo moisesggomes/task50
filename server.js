@@ -46,7 +46,7 @@ function isAuthenticated(request, response, next) {
 
 
 app.get("/", isAuthenticated, (request, response) => {
-    return response.render("pages/hello", { name: request.session.user })
+    return response.render("pages/home", { name: request.session.user })
 })
 app.get("/", (request, response) => {
     return response.redirect("/login")
