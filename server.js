@@ -137,7 +137,7 @@ function getUser(request, response, database) {
     }
     return user
 }
-function notAuthenticated(request, response) {
+function redirectNotAuthenticated(request, response) {
     return response.status(401).json({ message: "Not authenticated" })
 }
 //---------------------GET---------------------
@@ -167,7 +167,7 @@ app.post("/tasks", isAuthenticated, (request, response) => {
     }
     return response.status(201).json(result)
 })
-app.post("/tasks", notAuthenticated)
+app.post("/tasks", redirectNotAuthenticated)
 
 //---------------------UPDATE---------------------
 app.put("/tasks", isAuthenticated, (request, response) => {
@@ -179,7 +179,7 @@ app.put("/tasks", isAuthenticated, (request, response) => {
     }
     return response.status(200).json(result)
 })
-app.put("/tasks", notAuthenticated)
+app.put("/tasks", redirectNotAuthenticated)
 
 //---------------------DELETE---------------------
 app.delete("/tasks", isAuthenticated, (request, response) => {
@@ -191,4 +191,4 @@ app.delete("/tasks", isAuthenticated, (request, response) => {
     }
     return response.status(200).json(result)
 })
-app.delete("/tasks", notAuthenticated)
+app.delete("/tasks", redirectNotAuthenticated)
