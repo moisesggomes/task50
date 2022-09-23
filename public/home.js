@@ -57,17 +57,19 @@ async function sendTask(event, method) {
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
     xhr.send(JSON.stringify(body))
     xhr.onreadystatechange = function() {
-        try {
-            console.log(JSON.parse(xhr.response))
-            const parsedJSON = JSON.parse(xhr.response)
-            const actionsDiv = trContainer.querySelector(".actions > div")
-            trContainer.dataset.taskId = parsedJSON.info.lastInsertRowid
-            actionsDiv.innerHTML = 
-                `
-                    <img src="assets/edit.svg" alt="Edit task" title="Send modifications" onclick="sendTask(event, 'PUT')" />
-                    <img src="assets/delete.svg" alt="Delete task" title="Delete task" onclick="deleteTask(event)" />
-                `
-        } catch (error) {}
+        if (xhr.readyState == 4) {
+            try {
+                console.log(JSON.parse(xhr.response))
+                const parsedJSON = JSON.parse(xhr.response)
+                const actionsDiv = trContainer.querySelector(".actions > div")
+                trContainer.dataset.taskId = parsedJSON.info.lastInsertRowid
+                actionsDiv.innerHTML = 
+                    `
+                        <img src="assets/edit.svg" alt="Edit task" title="Send modifications" onclick="sendTask(event, 'PUT')" />
+                        <img src="assets/delete.svg" alt="Delete task" title="Delete task" onclick="deleteTask(event)" />
+                    `
+            } catch (error) {}
+        }
     }
 }
 
@@ -108,11 +110,9 @@ function deleteTasks() {
         if(this.readyState == 4) {
             try {
                 const tbody = document.querySelector("main table tbody")
-                const rows = tbody.getElementsByTagName("tr")
-                for (let row of rows) {
-                    if (tasksToBeDeleted.findIndex(value => value.id == row.dataset.taskId) != -1) {
-                        row.remove()
-                    }
+                for (let task of tasksToBeDeleted) {
+                    const targetTask = tbody.querySelector(`tr[data-task-id="${task.id}"]`)
+                    targetTask.remove()
                 }
                 tasksToBeDeleted = []
                 deleteTasksIcon.classList.remove("show")
