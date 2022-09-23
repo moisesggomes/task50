@@ -16,6 +16,7 @@ function createTask(task, userId, database) {
         }
         return {
             message: "New task created!",
+            info,
             data: database.prepare("SELECT * FROM tasks WHERE user_id = ?").all(userId)
         }
     } catch (error) {
@@ -40,6 +41,7 @@ function updateTask(task, userId, database) {
 }
 function deleteTasks(taskArray, userId, database) {
     try {
+        console.log(taskArray)
         const statement = database.prepare("DELETE FROM tasks WHERE id = ? AND user_id = ?")
         let tasksDeleted = 0
         for (let task of taskArray) {

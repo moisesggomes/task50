@@ -58,7 +58,15 @@ async function sendTask(event, method) {
     xhr.send(JSON.stringify(body))
     xhr.onreadystatechange = function() {
         try {
-            writeTasks(JSON.parse(xhr.response).data)
+            console.log(JSON.parse(xhr.response))
+            const parsedJSON = JSON.parse(xhr.response)
+            const actionsDiv = trContainer.querySelector(".actions > div")
+            trContainer.dataset.taskId = parsedJSON.info.lastInsertRowid
+            actionsDiv.innerHTML = 
+                `
+                    <img src="assets/edit.svg" alt="Edit task" title="Send modifications" onclick="sendTask(event, 'PUT')" />
+                    <img src="assets/delete.svg" alt="Delete task" title="Delete task" onclick="deleteTask(event)" />
+                `
         } catch (error) {}
     }
 }
