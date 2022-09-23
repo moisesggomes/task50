@@ -54,7 +54,7 @@ async function sendTask(event, method) {
 
     const xhr = new XMLHttpRequest()
     xhr.open(method, "/tasks", true)
-    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
     xhr.send(JSON.stringify(body))
     xhr.onreadystatechange = function() {
         try {
@@ -105,11 +105,21 @@ function deleteTasks() {
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xhr.send(JSON.stringify(body))
     xhr.onreadystatechange = function() {
-        try {
-            writeTasks(JSON.parse(xhr.response).tasks)
-            tasksToBeDeleted = []
-            deleteTasksIcon.classList.remove("show")
-        } catch (error) {}
+        if(this.readyState == 4) {
+            try {
+                const tbody = document.querySelector("main table tbody")
+                const rows = tbody.getElementsByTagName("tr")
+                for (let row of rows) {
+                    if (tasksToBeDeleted.findIndex(value => value.id == row.dataset.taskId) != -1) {
+                        row.remove()
+                    }
+                }
+                tasksToBeDeleted = []
+                deleteTasksIcon.classList.remove("show")
+            } catch (error) {
+                console.log(error)
+            }
+        }
     }
 }
 

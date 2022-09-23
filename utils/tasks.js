@@ -41,7 +41,6 @@ function updateTask(task, userId, database) {
 }
 function deleteTasks(taskArray, userId, database) {
     try {
-        console.log(taskArray)
         const statement = database.prepare("DELETE FROM tasks WHERE id = ? AND user_id = ?")
         let tasksDeleted = 0
         for (let task of taskArray) {
