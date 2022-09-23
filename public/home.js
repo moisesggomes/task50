@@ -1,6 +1,7 @@
 const pageActions = document.querySelector("#pageActions")
 const deleteTasksIcon = document.querySelector("#deleteTasks")
 let tasksToBeDeleted = []
+let temporaryId = 0
 
 getTasks()
 
@@ -14,7 +15,7 @@ async function getTasks(event) {
 function createTask(event) {
     const tbody = document.querySelector("tbody")
     const task = {
-        id: 0,
+        id: temporaryId,
 		task: "Write your task here!",
 		description: "Provide some description about your task also!",
 		finished: 0,
@@ -22,6 +23,9 @@ function createTask(event) {
 	}
     const row = createRow(task)
     tbody.appendChild(row)
+    row.setAttribute("id", `task${temporaryId}`)
+    window.location.hash = `task${temporaryId}`
+    temporaryId++
 }
 async function sendTask(event, method) {
     const trContainer = event.target.parentNode.parentNode.parentNode
