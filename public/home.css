@@ -14,6 +14,18 @@ main div:first-child {
     justify-content: space-between;
     gap: 2rem;
 }
+main div:first-child h2 {
+    display: flex;
+    gap: 2rem;
+}
+main div:first-child h2 span {
+    font-size: inherit;
+}
+main div:first-child h2 img {
+    width: 2rem;
+
+    cursor: pointer;
+}
 main div:first-child #pageActions {
     display: flex;
     gap: 3rem;
@@ -28,6 +40,37 @@ main div:first-child #pageActions img#deleteTasks {
 }
 main div:first-child #pageActions img#deleteTasks.show {
     display: inline-block;
+}
+
+main #help {
+    display: none;
+    
+    line-height: 2.5rem;
+}
+main #help.show {
+    margin: 3rem auto;
+    border-radius: .8rem;
+    width: 60rem;
+    max-width: 100%;
+    padding: 2rem;
+
+    background-color: lightgray;
+
+    display: flex;
+
+    flex-direction: column;
+    align-items: center;
+}
+main #help img {
+    width: 1.6rem;
+}
+main #help ul {
+    list-style-position: inside;
+
+    flex-direction: column;
+    gap: .8rem;
+
+    display: flex;
 }
 
 main table {

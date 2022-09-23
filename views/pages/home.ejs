@@ -10,12 +10,24 @@
 
     <main>
         <div>
-            <h2>Create, update and delete your tasks!</h2>
+            <h2>
+                <span>Create, update and delete your tasks!</span>
+                <img src="assets/help.svg" alt="Help to use the options" title="Help" />
+            </h2>
             <div id="pageActions">
                 <img id="deleteTasks" class="" src="assets/trash.svg" alt="Delete tasks" onclick="deleteTasks(event)" title="Delete Tasks" />
                 <img src="assets/reload.svg" alt="Refresh tasks" onclick="getTasks(event)" title="Refresh tasks" />
                 <img src="assets/create.svg" alt="Create task" onclick="createTask(event)" title="Create task" />
             </div>
+        </div>
+
+        <div id="help" class="">
+            <ul>
+                <li>Click in the <img src="assets/reload.svg" alt="Reload icon" /> icon to refresh the content from the server database</li>
+                <li>Click in the <img src="assets/create.svg" alt="Create task icon" /> icon to create a new task. Don't forget to click in the <img src="assets/confirm.svg" alt="Confirm icon" /> icon to save to the database</li>
+                <li>To update an already created task, you can simply click in the specific &quot;task&quot; or &quot;description&quot; field to edit the content. Don't forget to click in the <img src="assets/edit.svg" alt="Edit icon" /> icon right after to save the changes (the same goes to mark a task as finished by clicking in the check-box)</li>
+                <li>To delete tasks you can click in the <img src="assets/delete.svg" alt="Delete task icon" /> one by one. To submit the changes you have to click in the <img src="assets/trash.svg" alt="Delete from database" /> icon</li>
+            </ul>
         </div>
 
         <table>

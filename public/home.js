@@ -1,3 +1,13 @@
+const helpIcon = document.querySelector("main div:first-child h2 img")
+helpIcon.addEventListener("click", (event) => {
+    const help = document.querySelector("#help")
+    if (help.classList.contains("show")) {
+        help.classList.remove("show")
+    } else {
+        help.classList.add("show")
+    }
+})
+
 const pageActions = document.querySelector("#pageActions")
 const deleteTasksIcon = document.querySelector("#deleteTasks")
 let tasksToBeDeleted = []
