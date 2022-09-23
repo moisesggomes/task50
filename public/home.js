@@ -113,10 +113,10 @@ function createRow(task) {
     const tdFinished = createTdFinished(task)
     tr.appendChild(tdFinished)
 
-    const tdTask = createTdTask(task)
+    const tdTask = createTdTask(task, tr.querySelector(".finished input").checked)
     tr.appendChild(tdTask)
 
-    const tdDescription = createTdDescription(task)
+    const tdDescription = createTdDescription(task, tr.querySelector(".finished input").checked)
     tr.appendChild(tdDescription)
 
     if (task.new) {
@@ -139,6 +139,14 @@ function createTdFinished(task) {
 
     const finished = document.createElement("input")
     finished.setAttribute("type", "checkbox")
+
+    finished.addEventListener("change", (event) => {
+        const trParent = event.target.parentNode.parentNode.parentNode
+        const task = trParent.querySelector(".task")
+        const description = trParent.querySelector(".description")
+
+        strikeIfFinished(finished, task, description)
+    })
     if (task.finished === 1) {
         finished.checked = true
     } else {
@@ -147,20 +155,33 @@ function createTdFinished(task) {
     div.appendChild(finished)
     return tdFinished
 }
+function strikeIfFinished(finished, task, description) {
+    if (finished.checked) {
+        task.style.textDecoration = description.style.textDecoration = "line-through"
+    } else {
+        task.style.textDecoration = description.style.textDecoration = "initial"
+    }
+}
 
-function createTdTask(task) {
+function createTdTask(task, finished) {
     const tdTask = document.createElement("td")
     tdTask.classList.add("task")
     tdTask.setAttribute("contenteditable", "true")
     tdTask.innerHTML = task.task
+    if (finished) {
+        tdTask.style.textDecoration = "line-through"
+    }
     return tdTask
 }
 
-function createTdDescription(task) {
+function createTdDescription(task, finished) {
     const tdDescription = document.createElement("td")
     tdDescription.classList.add("description")
     tdDescription.setAttribute("contenteditable", "true")
     tdDescription.innerHTML = task.description
+    if (finished) {
+        tdDescription.style.textDecoration = "line-through"
+    }
     return tdDescription
 }
 
