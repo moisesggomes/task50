@@ -37,6 +37,7 @@ function createTask(event) {
     window.location.hash = `task${temporaryId}`
     temporaryId++
 }
+
 async function sendTask(event, method) {
     const trContainer = event.target.parentNode.parentNode.parentNode
     const tdFinished = trContainer.querySelector("input[type='checkbox']")
@@ -68,9 +69,27 @@ async function sendTask(event, method) {
                         <img src="assets/edit.svg" alt="Edit task" title="Send modifications" onclick="sendTask(event, 'PUT')" />
                         <img src="assets/delete.svg" alt="Delete task" title="Delete task" onclick="deleteTask(event)" />
                     `
-            } catch (error) {}
+            } catch (error) {
+                console.log(error)
+            }
         }
     }
+}
+
+function editedTask(event) {
+    let trContainer
+    switch (event.target.tagName) {
+        case "INPUT":
+            trContainer = event.target.parentNode.parentNode.parentNode
+            break
+        case "TD":
+            trContainer = event.target.parentNode
+            break
+        default:
+            return
+    }
+    const editIcon = trContainer.querySelector(".actions img")
+    editIcon.src = "assets/confirm.svg"
 }
 
 
@@ -171,6 +190,7 @@ function createTdFinished(task) {
 
     const finished = document.createElement("input")
     finished.setAttribute("type", "checkbox")
+    finished.addEventListener("change", editedTask)
 
     finished.addEventListener("change", (event) => {
         const trParent = event.target.parentNode.parentNode.parentNode
@@ -197,6 +217,8 @@ function strikeIfFinished(finished, task, description) {
 
 function createTdTask(task, finished) {
     const tdTask = document.createElement("td")
+    tdTask.addEventListener("input", editedTask)
+
     tdTask.classList.add("task")
     tdTask.setAttribute("contenteditable", "true")
     tdTask.innerHTML = task.task
@@ -208,6 +230,8 @@ function createTdTask(task, finished) {
 
 function createTdDescription(task, finished) {
     const tdDescription = document.createElement("td")
+    tdDescription.addEventListener("input", editedTask)
+
     tdDescription.classList.add("description")
     tdDescription.setAttribute("contenteditable", "true")
     tdDescription.innerHTML = task.description

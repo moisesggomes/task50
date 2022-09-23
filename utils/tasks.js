@@ -33,6 +33,7 @@ function updateTask(task, userId, database) {
         }
         return {
             message: "Task updated!",
+            info,
             data: database.prepare("SELECT * FROM tasks WHERE user_id = ?").all(userId)
         }
     } catch(error) {
