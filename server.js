@@ -57,6 +57,7 @@ app.get("/login", isAuthenticated, (request, response) => {
     return response.redirect("/")
 })
 app.get("/login", (request, response) => {
+    request.session.signupErrorMessage = undefined
     return response.render("pages/login", { errorMessage: request.session.loginErrorMessage })
 })
 
@@ -86,6 +87,7 @@ app.get("/signup", isAuthenticated, (request, response) => {
     return response.redirect("/")
 })
 app.get("/signup", (request, response) => {
+    request.session.loginErrorMessage = undefined
     return response.render("pages/signup", { errorMessage: request.session.signupErrorMessage })
 })
 app.post("/signup", express.urlencoded({ extended: false }), (request, response, next) => {
