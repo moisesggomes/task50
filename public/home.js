@@ -93,11 +93,16 @@ function deleteTasks() {
 
 
 function writeTasks(tasks) {
-    const tbody = document.querySelector("tbody")
-    tbody.innerHTML = ""
-    for (let task of tasks) {
-        const tr = createRow(task)
-        tbody.appendChild(tr)
+    try {
+        tasks.length
+        const tbody = document.querySelector("tbody")
+        tbody.innerHTML = ""
+        for (let task of tasks) {
+            const tr = createRow(task)
+            tbody.appendChild(tr)
+        }
+    } catch (error) {
+        console.log("There are no tasks!")
     }
 }
 
