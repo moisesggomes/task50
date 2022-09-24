@@ -11,7 +11,7 @@ helpIcon.addEventListener("click", (event) => {
 const pageActions = document.querySelector("#pageActions")
 const deleteTasksIcon = document.querySelector("#deleteTasks")
 let tasksToBeDeleted = []
-let temporaryId = 0
+let temporaryId = -1
 
 getTasks()
 
@@ -35,7 +35,7 @@ function createTask(event) {
     tbody.appendChild(row)
     row.setAttribute("id", `task${temporaryId}`)
     window.location.hash = `task${temporaryId}`
-    temporaryId++
+    temporaryId--
 }
 
 async function sendTask(event, method) {
