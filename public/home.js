@@ -8,10 +8,12 @@ helpIcon.addEventListener("click", (event) => {
     }
 })
 
+const tbody = document.querySelector("main table tbody")
 const pageActions = document.querySelector("#pageActions")
 const deleteTasksIcon = document.querySelector("#deleteTasks")
-let tasksToBeDeleted = []
+
 let temporaryId = -1
+let tasksToBeDeleted = []
 
 getTasks()
 
@@ -23,7 +25,6 @@ async function getTasks(event) {
 
 
 function createTask(event) {
-    const tbody = document.querySelector("tbody")
     const task = {
         id: temporaryId,
 		task: "Write your task here!",
@@ -62,13 +63,12 @@ async function sendTask(event, method) {
             try {
                 console.log(JSON.parse(xhr.response))
                 const parsedJSON = JSON.parse(xhr.response)
-                const actionsDiv = trContainer.querySelector(".actions > div")
-                trContainer.dataset.taskId = parsedJSON.info.lastInsertRowid
-                actionsDiv.innerHTML = 
-                    `
-                        <img src="assets/edit.svg" alt="Edit task" title="Send modifications" onclick="sendTask(event, 'PUT')" />
-                        <img src="assets/delete.svg" alt="Delete task" title="Delete task" onclick="deleteTask(event)" />
-                    `
+                if (method === "POST") {
+                    trContainer.dataset.taskId = parsedJSON.info.lastInsertRowid
+                }
+                const editIcon = trContainer.querySelector(".actions > div > img")
+                editIcon.src = "assets/edit.svg"
+                editIcon.setAttribute("onclick", "sendTask(event, 'PUT')")
             } catch (error) {
                 console.log(error)
             }
@@ -114,6 +114,7 @@ function deleteTask(event) {
     } else {
         deleteTasksIcon.classList.remove("show")
     }
+    console.clear()
     console.log(tasksToBeDeleted)
 }
 function deleteTasks() {
@@ -128,7 +129,6 @@ function deleteTasks() {
     xhr.onreadystatechange = function() {
         if(this.readyState == 4) {
             try {
-                const tbody = document.querySelector("main table tbody")
                 for (let task of tasksToBeDeleted) {
                     const targetTask = tbody.querySelector(`tr[data-task-id="${task.id}"]`)
                     targetTask.remove()
@@ -145,8 +145,10 @@ function deleteTasks() {
 
 function writeTasks(tasks) {
     try {
-        tasks.length
-        const tbody = document.querySelector("tbody")
+        if (typeof(tasks) === "string") {
+            throw "There are no tasks"
+        }
+
         tbody.innerHTML = ""
         for (let task of tasks) {
             const tr = createRow(task)
