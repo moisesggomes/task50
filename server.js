@@ -12,7 +12,7 @@ const database = new sqlite3("databases/database.sqlite")
 
 const app = express()
 const PORT = process.env.PORT || 8080
-app.listen(PORT)
+app.listen(PORT, () => console.log(`Server is running 'http://localhost:${PORT}/'`))
 
 const SQLiteStore = better_sqlite3_session_store(session)
 
