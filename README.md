@@ -102,4 +102,31 @@ I used Javascript in the Backend of this project. This application uses the [Exp
   - `public/assets`:
     - Contains all source `.svg` images used
 - `utils`:
-  - 
+  - This directory contains helper functions for login/signup and the tasks management
+  - `utils/login_signup.js`:
+    - This file uses the native crypto module from NodeJS for hashing the user passwords in the `hashPassword` function
+    - First, the main functions (`login` and `signup`) parse the data sent by the browser, validate and then checks if the user can be authenticated. If not, it will return an errorMessage to be show in the `/login` or `/signup` paths
+  - `utils/tasks.js`:
+    - Here are the functions to operate in the database by managing the tasks. All these functions take not only the needed data to do stuff like the taskId of every task but also the userId validate in the server.js file by the `getUser` function mentioned earlier even when they don't need it explicitly, like for deleting, which only needs the array of all taskId to be deleted.
+- `views`:
+  - Inside of this directory is a `pages` directory and a `partials` directory
+  - Instead of ending with a `.html` extension, all templates end with the `.ejs` extension
+  - The syntax incudes partials by using
+    ```ejs
+    <%- include("../partials/head.ejs", { title: "Login" }) %>
+    ```
+    This grabs the &lt;head&gt;...&lt;/head&gt; tag from the `partials/head.ejs` template
+  - To add Javascript logic, EJS uses something like
+    ```ejs
+    <%_ if (errorMessage) { _%>
+        <p id="errorMessage">
+            <img src="assets/sad-face.svg" alt="Sad face" />
+            <%= errorMessage %>
+        </p>
+    <%_ } _%>
+    ```
+    These lines shows an error message only if it exists
+  - `views/pages`:
+    - Here is the main structure of each page, `home.ejs` (for `/` route), `login.ejs` (for `/login` route) and `signup.ejs` (for `/signup` route)
+  - `views/partials`:
+    - Here are templates that can be share by other files (`head`, `header` and `footer`)
