@@ -3,7 +3,7 @@ name: dockerize
 on:
   push:
     branches:
-      - 'docker'
+      - 'main'
 
 jobs:
   docker:
