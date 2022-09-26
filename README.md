@@ -54,4 +54,32 @@ I used Javascript in the Backend of this project. This application uses the [Exp
 
 #### Structure of the project
 - Root:
-  - Here, we have the `server.js` file, which initializes our app.
+  - `server.js`:
+    - Initializes the app and it's where does all routing management and sessions
+    - In the beginning of the file, it imports the modules, helper funcions, start the application with `app.listen(/* ... */)` and set some configurations:
+      - Set the sqlite as the database for managing sessions
+        ```js
+        const SQLiteStore = better_sqlite3_session_store(session)
+        ```
+      - The middlewares for serving static files, session configurations and JSON parsing with
+        ```js
+        app.use(/* ... */)
+        ```
+      - And tells Express to use the EJS templating
+        ```js
+        app.set("view engine", "ejs")
+        ```
+    - After that first part, we have the routes to interact with the application
+      - `/` manages the user tasks itself. It requires that the user is logged in, otherwise, it will be redirected to the `/login` route
+      - `/login` and `/signup` are only available if the user is not logged in. If so, the user can type the username and password to be validated by the database and these actions will call the respective helper function from `utils/login_signup.js`
+        - If an error happens with the authentication or validation of the data typed, it will show in the screen for the user below the form for login/signup in red. If not, the session will be created for the user.
+      - `/logout` destroys the current session
+    - And finally, the `/tasks` path provides an API for getting, creating, updating and deleting tasks, according to the method used.
+      - The middleware ```getUser``` checks if the user is authenticated, if it exists in the database and returns the data from it according to the `'user'` key get from the session. Every action in the database, will use not only the data sent by the user (like `PUT` or `DELETE` for example), but the actual data stored in the session itself for doing these operations. This prevents a user from trying to update or delete data related to another user by changing the data sent to the server like the taskId, for example.
+      - The `GET` method gets all tasks from the server
+      - The `POST` method creates a new task
+      - The `PUT` method updates an existing task every time a change is submited by the user (like marking a task as finished or by updating the task description)
+      - The `DELETE` method takes an array of tasks to be deleted by the user
+
+      - These routes use some helper functions from `utils/tasks.js` to do operations in the database. If an error occurs with any of these operations, a string with an error message is returned. Otherwise, the tasks will be returned with some info.
+  - 
