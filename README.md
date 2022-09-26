@@ -82,4 +82,24 @@ I used Javascript in the Backend of this project. This application uses the [Exp
       - The `DELETE` method takes an array of tasks to be deleted by the user
 
       - These routes use some helper functions from `utils/tasks.js` to do operations in the database. If an error occurs with any of these operations, a string with an error message is returned. Otherwise, the tasks will be returned with some info.
+  - `package*.json`:
+    - These are the files to keep track of all dependencies and scripts (like `npm start`)
+  - `Dockerfile`:
+    - The "blueprint" to generate the image to be run with Docker
+  - `.*ignore`:
+    - Files to prevent from pushing unnecessary files to Github or Docker Hub
+- `databases/database.sqlite`:
+  - This is the file to store all data
+    - It stores session data in a table called _sessions_
+    - It stores all tasks in a single table _tasks_
+    - And it stores the users username and hashed password in a table called _users_
+- `public`:
+  - Here are all static content served by the server. All `.css`
+  - `public/home.js`:
+    - This file contains all logic when the user is interacting with the application
+    - It has the logic for show/hide elements and the main logic for getting, creating, updating, deleting and sending the request to the server using the **`fetch API`** and **`XMLHttpRequest API`**
+    - I tried to split up the logic a little bit by using functions for commom code tasks like creating elements and sub-elements, writing and selecting tasks to be deleted
+  - `public/assets`:
+    - Contains all source `.svg` images used
+- `utils`:
   - 
