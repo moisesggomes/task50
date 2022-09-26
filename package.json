@@ -4,6 +4,7 @@
   "description": "Final project for CS50 course",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "dev": "nodemon server.js"
   },
   "repository": {

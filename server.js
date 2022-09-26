@@ -1,6 +1,4 @@
 const path = require("path")
-const dotenv = require("dotenv")
-dotenv.config()
 
 const { signUp, login } = require("./utils/login_signup")
 const { getTasks, createTask, updateTask, deleteTasks } = require("./utils/tasks")
@@ -13,7 +11,8 @@ const better_sqlite3_session_store = require("better-sqlite3-session-store")
 const database = new sqlite3("databases/database.sqlite")
 
 const app = express()
-app.listen(8080)
+const PORT = process.env.PORT || 8080
+app.listen(PORT)
 
 const SQLiteStore = better_sqlite3_session_store(session)
 
