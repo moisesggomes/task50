@@ -4,9 +4,9 @@
 
 #### Description:
 
-Hi :wave: ! This project provides a place in the web to setup tasks to get organized and keep track of daily tasks, goals and schedule by log in with an account, creating, editing and deleting tasks when needed.
+Hi :wave: ! This project provides a place in the web to setup tasks to get organized and keep track of daily tasks, goals and schedule by log in with an account, creating, editing and deleting tasks when needed
 
-I used Javascript in the Backend of this project. This application uses the [ExpressJS](https://expressjs.com) framework for creating the server and managing routes, and [express-session](https://github.com/expressjs/session#readme) module for session management. The templating of pages uses [EJS](https://ejs.co/). For storing user and session data I decided to use [sqlite](https://www.sqlite.org). The connection between the application and the database uses the [better-sqlite3](https://github.com/WiseLibs/better-sqlite3) module.
+I used Javascript in the Backend of this project. This application uses the [ExpressJS](https://expressjs.com) framework for creating the server and managing routes, and [express-session](https://github.com/expressjs/session#readme) module for session management. The templating of pages uses [EJS](https://ejs.co/). For storing user and session data I decided to use [sqlite](https://www.sqlite.org). The connection between the application and the database uses the [better-sqlite3](https://github.com/WiseLibs/better-sqlite3) module
 
 #### How to run this application
 1. The most easy way, I believe, is by running it on [Docker](https://www.docker.com/)
@@ -51,6 +51,16 @@ I used Javascript in the Backend of this project. This application uses the [Exp
       - If you got some error related to the **better-sqlite3** after running `npm install`, be sure that you also have sqlite3 installed
       - Maybe this could help:
         - https://stackoverflow.com/questions/57241886/ive-a-problem-for-install-better-sqlite3
+#### How it works
+- **Login** and **Signup**
+  - First, you have the login page. Here you can type your username (2+ characters) and your password (6+ characters). If something goes wrong you will see an error message describing what can be wrong. If not, you are logged in
+  - To create a new account, you just have to go to the **register** page and create a new account. Here goes the same, if anything goes wrong, an error message will be shown
+- The main part of the application
+  - If the user is successfully authenticated, you can start by creating tasks and writing what they are about
+  - By clicking in the **(!)** icon, you will have some description about how to use it
+  - The main idea is very simple: the user can create tasks, update them by marking as finished or changing the text fields (You just have to click in the respective field to start writing) in them, get what is already stored in the database and delete them
+  - Every time you click in a check-box or update the text fields the icon to edit will change. The updated content will be saved to the database only after you click in that icon
+  - To logout, just click in the **Log out** link in the top of the page
 
 #### Structure of the project
 - Root:
@@ -72,16 +82,16 @@ I used Javascript in the Backend of this project. This application uses the [Exp
     - After that first part, we have the routes to interact with the application
       - `/` manages the user tasks itself. It requires that the user is logged in, otherwise, it will be redirected to the `/login` route
       - `/login` and `/signup` are only available if the user is not logged in. If so, the user can type the username and password to be validated by the database and these actions will call the respective helper function from `utils/login_signup.js`
-        - If an error happens with the authentication or validation of the data typed, it will show in the screen for the user below the form for login/signup in red. If not, the session will be created for the user.
+        - If an error happens with the authentication or validation of the data typed, it will show in the screen for the user below the form for login/signup in red. If not, the session will be created for the user
       - `/logout` destroys the current session
-    - And finally, the `/tasks` path provides an API for getting, creating, updating and deleting tasks, according to the method used.
-      - The middleware ```getUser``` checks if the user is authenticated, if it exists in the database and returns the data from it according to the `'user'` key get from the session. Every action in the database, will use not only the data sent by the user (like `PUT` or `DELETE` for example), but the actual data stored in the session itself for doing these operations. This prevents a user from trying to update or delete data related to another user by changing the data sent to the server like the taskId, for example.
+    - And finally, the `/tasks` path provides an API for getting, creating, updating and deleting tasks, according to the method used
+      - The middleware ```getUser``` checks if the user is authenticated, if it exists in the database and returns the data from it according to the `'user'` key get from the session. Every action in the database, will use not only the data sent by the user (like `PUT` or `DELETE` for example), but the actual data stored in the session itself for doing these operations. This prevents a user from trying to update or delete data related to another user by changing the data sent to the server like the taskId, for example
       - The `GET` method gets all tasks from the server
       - The `POST` method creates a new task
       - The `PUT` method updates an existing task every time a change is submited by the user (like marking a task as finished or by updating the task description)
       - The `DELETE` method takes an array of tasks to be deleted by the user
 
-      - These routes use some helper functions from `utils/tasks.js` to do operations in the database. If an error occurs with any of these operations, a string with an error message is returned. Otherwise, the tasks will be returned with some info.
+      - These routes use some helper functions from `utils/tasks.js` to do operations in the database. If an error occurs with any of these operations, a string with an error message is returned. Otherwise, the tasks will be returned with some info
   - `package*.json`:
     - These are the files to keep track of all dependencies and scripts (like `npm start`)
   - `Dockerfile`:
@@ -107,7 +117,7 @@ I used Javascript in the Backend of this project. This application uses the [Exp
     - This file uses the native crypto module from NodeJS for hashing the user passwords in the `hashPassword` function
     - First, the main functions (`login` and `signup`) parse the data sent by the browser, validate and then checks if the user can be authenticated. If not, it will return an errorMessage to be show in the `/login` or `/signup` paths
   - `utils/tasks.js`:
-    - Here are the functions to operate in the database by managing the tasks. All these functions take not only the needed data to do stuff like the taskId of every task but also the userId validate in the server.js file by the `getUser` function mentioned earlier even when they don't need it explicitly, like for deleting, which only needs the array of all taskId to be deleted.
+    - Here are the functions to operate in the database by managing the tasks. All these functions take not only the needed data to do stuff like the taskId of every task but also the userId validate in the server.js file by the `getUser` function mentioned earlier even when they don't need it explicitly, like for deleting, which only needs the array of all taskId to be deleted
 - `views`:
   - Inside of this directory is a `pages` directory and a `partials` directory
   - Instead of ending with a `.html` extension, all templates end with the `.ejs` extension
