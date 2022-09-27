@@ -1,10 +1,10 @@
 # Task50
 
-#### Video Demo:  [Introductory Video](URL)
+#### Video Demo:  [Introductory Video](https://youtu.be/XVYkUFy9sXM)
 
 #### Description:
 
-Hi :wave: ! This project provides a place in the web to setup tasks to get organized and keep track of daily tasks, goals and schedule by log in with an account, creating, editing and deleting tasks when needed
+Hi :wave: ! This project is a simple web application to setup TODO tasks to get organized and keep track of daily tasks, goals and schedule by creating, editing and deleting tasks when needed
 
 I used Javascript in the Backend of this project. This application uses the [ExpressJS](https://expressjs.com) framework for creating the server and managing routes, and [express-session](https://github.com/expressjs/session#readme) module for session management. The templating of pages uses [EJS](https://ejs.co/). For storing user and session data I decided to use [sqlite](https://www.sqlite.org). The connection between the application and the database uses the [better-sqlite3](https://github.com/WiseLibs/better-sqlite3) module
 
